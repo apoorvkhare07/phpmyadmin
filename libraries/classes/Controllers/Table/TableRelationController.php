@@ -128,9 +128,7 @@ class TableRelationController extends TableController
         }
 
         // updates for foreign keys
-        if (isset($_POST['destination_foreign_db'])) {
-            $this->updateForForeignKeysAction();
-        }
+        $this->updateForForeignKeysAction();
 
         // Updates for display field
         if ($this->cfgRelation['displaywork'] && isset($_POST['display_field'])) {
@@ -247,6 +245,7 @@ class TableRelationController extends TableController
 
         // (for now, one index name only; we keep the definitions if the
         // foreign db is not the same)
+        if (isset($_POST['destination_foreign_db']) && isset($_POST['destination_foreign_table']) && isset($_POST['destination_foreign_column'])){
         list($html, $preview_sql_data, $display_query, $seen_error)
             = $this->upd_query->updateForeignKeys(
                 $_POST['destination_foreign_db'],
@@ -258,12 +257,11 @@ class TableRelationController extends TableController
                 : null
             );
         $this->response->addHTML($html);
-
+        }   
         // If there is a request for SQL previewing.
         if (isset($_POST['preview_sql'])) {
             Core::previewSQL($preview_sql_data);
         }
-
         if (!empty($display_query) && !$seen_error) {
             $GLOBALS['display_query'] = $display_query;
             $this->response->addHTML(
